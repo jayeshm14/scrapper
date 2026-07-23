@@ -1,0 +1,268 @@
+sites:
+  - name: quotes_static
+    start_urls:
+      - "https://quotes.toscrape.com/"
+    fetcher: basic
+    pagination:
+      next_selector: "li.next a::attr(href)"
+      max_pages: 3
+    selectors:
+      item: ".quote"
+      fields:
+        text: ".text::text"
+        author: ".author::text"
+        tags: ".tag::text"
+        link: "a::attr(href)"
+    rate_limit_seconds: 1.5
+    output_format: json
+
+  - name: books_dynamic
+    start_urls:
+      - "https://books.toscrape.com/"
+    fetcher: dynamic
+    pagination:
+      next_selector: "li.next a::attr(href)"
+      max_pages: 3
+    selectors:
+      item: "article.product_pod"
+      fields:
+        title: "h3 a::attr(title)"
+        price: ".price_color::text"
+        availability: ".availability::text"
+        link: "h3 a::attr(href)"
+    rate_limit_seconds: 2.0
+    output_format: csv
+
+  - name: magicbricks
+    parser: json_embed
+    start_urls:
+      - "https://www.magicbricks.com/flats-in-sector-134-noida-for-sale-pppfs"
+    fetcher: dynamic
+    embed:
+      var: "SERVER_PRELOADED_STATE_"
+      data_path: "searchResult"
+      filter:
+        field: "projectSocietyLink"
+        contains: "jaypee-kosmos"
+    selectors:
+      fields:
+        prop_id: "encId"
+        title: "propertyTitle"
+        price: "priceD"
+        price_raw: "price"
+        project: "prjname"
+        carpet_area: "carpetArea"
+        super_area: "ca"
+        floor: "floorNo"
+        total_floors: "floors"
+        locality: "lmtDName"
+        full_address: "psmAdd"
+        description: "seoDesc"
+        listing_url: "url"
+        furnished: "furnishedD"
+        bedroom: "bedroomD"
+        bathrooms: "bathD"
+        balconies: "balconiesD"
+        possession: "possStatusD"
+        developer: "devName"
+        image: "image"
+        all_images: "allImgPath"
+        price_per_sqft: "sqFtPrice"
+        transaction_type: "transactionTypeD"
+        user_type: "userType"
+        facing: "facingD"
+        flooring: "flooringTyD"
+        parking: "parkingD"
+        ownership_type: "OwnershipTypeD"
+        video_url: "pmtvLink"
+        modified_date: "modifiedDate"
+        image_count: "imageCount"
+    rate_limit_seconds: 3.0
+    output_format: json
+
+  - name: 99acres
+    parser: json_embed
+    start_urls:
+      - "https://www.99acres.com/property-in-sector-134-noida-ffid"
+    fetcher: dynamic
+    respect_robots: false
+    embed:
+      var: "__initialData__"
+      data_path: "srp.pageData.properties"
+      filter:
+        field: "PROP_NAME"
+        contains: "Kosmos"
+    selectors:
+      fields:
+        prop_id: "SPID"
+        title: "PROP_HEADING"
+        price: "PRICE"
+        price_raw: "MAX_PRICE"
+        formatted_price: "FORMATTED_PRICE"
+        bedrooms: "BEDROOM_NUM"
+        bathrooms: "BATHROOM_NUM"
+        balconies: "BALCONY_NUM"
+        carpet_area: "CARPET_AREA"
+        carpet_sqft: "CARPET_SQFT"
+        super_area: "SUPERBUILTUP_AREA"
+        super_builtup_sqft: "SUPERBUILTUP_SQFT"
+        builtup_sqft: "BUILTUP_SQFT"
+        floor: "FLOOR_NUM"
+        total_floors: "TOTAL_FLOOR"
+        furnish: "FURNISH"
+        facing: "FACING"
+        property_type: "PROPERTY_TYPE"
+        locality: "LOCALITY"
+        city: "CITY"
+        description: "DESCRIPTION"
+        building_name: "BUILDING_NAME"
+        society_name: "SOCIETY_NAME"
+        listing_url: "PD_URL"
+        possession: "AVAILABILITY"
+        ownership: "VALUE_LABEL"
+        age: "AGE"
+        price_per_sqft: "PRICE_PER_UNIT_AREA"
+        photo_url: "PHOTO_URL"
+        medium_photo_url: "MEDIUM_PHOTO_URL"
+        property_images: "PROPERTY_IMAGES"
+        thumbnail_images: "THUMBNAIL_IMAGES"
+        property_videos: "PROPERTY_VIDEOS"
+        contact_name: "CONTACT_NAME"
+        register_date: "REGISTER_DATE"
+        top_usps: "TOP_USPS"
+        parking: "RESERVED_PARKING"
+        overlooking: "OVERLOOKING"
+        transaction_type: "TRANSACT_TYPE"
+    rate_limit_seconds: 3.0
+    output_format: json
+
+  - name: squareyards
+    parser: jsonld
+    start_urls:
+      - "https://www.squareyards.com/sale/property-for-sale-in-noida"
+    fetcher: dynamic
+    embed:
+      types:
+        - Product
+        - SingleFamilyResidence
+        - Apartment
+      filter:
+        field: "address.addressLocality"
+        contains: "Noida"
+    selectors:
+      fields:
+        title: "name"
+        description: "description"
+        price: "offers.price"
+        price_display: "offers.price"
+        url: "url"
+        bedrooms: "numberOfRooms"
+        bathrooms: "numberOfBathroomsTotal"
+        floor_size: "floorSize"
+        floor_level: "floorlevel"
+        locality: "address.addressLocality"
+        city: "address.addressRegion"
+        latitude: "geo.latitude"
+        longitude: "geo.longitude"
+        image: "image"
+    rate_limit_seconds: 3.0
+    output_format: json
+
+  - name: olx
+    parser: css
+    start_urls:
+      - "https://www.olx.in/noida_g4059326/real-estate_c3"
+    fetcher: dynamic
+    pagination:
+      max_pages: 1
+    selectors:
+      item: "[data-aut-id='itemBox3']"
+      fields:
+        title: "[data-aut-id='itemTitle']::text"
+        price: "[data-aut-id='itemPrice']::text"
+        location: "[data-aut-id='item-location']::text, [data-aut-id='itemLocationEliteSeller']::text"
+        date: "[data-aut-id='itemDate']::text"
+        url: "a:first-of-type::attr(href)"
+        image: "figure img::attr(src)"
+        details: "[data-aut-id='itemDetails']::text"
+        category: "[data-aut-category-id]::attr(data-aut-category-id)"
+    rate_limit_seconds: 3.0
+    output_format: json
+
+  - name: proptiger
+    parser: css
+    start_urls:
+      - "https://www.proptiger.com/noida-real-estate"
+    fetcher: dynamic
+    pagination:
+      max_pages: 1
+    selectors:
+      item: ".popular-project-card"
+      fields:
+        title: ".popular-project-card__title::text"
+        price: ".popular-project-card__price::text"
+        location: ".popular-project-card__location span::text"
+        bhk: ".popular-project-card__meta span:first-child::text"
+        area: ".popular-project-card__meta span:last-child::text"
+        builder: ".popular-project-card__builder::text"
+        url: "a.popular-project-card__body::attr(href)"
+        image: "img.lazy-load-img::attr(src)"
+        status: ".popular-project-card__status span:last-child::text"
+    rate_limit_seconds: 3.0
+    output_format: json
+
+  # Site: nobroker.in
+  # Status: BLOCKED — XHR-only React SPA. The public API endpoint
+  #   (POST /api/v3/multi/property/BUY/filter?city=noida&pageNo=1) requires a
+  #   polygon geo-location token. The page's JavaScript (window.nb.appState) is
+  #   destroyed by React after initial load. No polygon data found in localStorage
+  #   (NoBrokerCache is empty in fresh browser). The API call passes
+  #   isCanonical=undefined in URL params. Cannot extract data without (a)
+  #   reverse-engineering the polygon lookup, (b) a real browser profile with
+  #   cached geolocation data, or (c) an alternative API that doesn't require
+  #   the polygon token.
+  # - name: nobroker
+  #   parser: json_embed
+  #   start_urls:
+  #     - "https://www.nobroker.in/property/sale/noida/"
+  #   fetcher: stealthy
+  #   embed:
+  #     var: "nb.appState"
+  #     data_path: "listPageProperties"
+  #   selectors:
+  #     fields:
+  #       prop_id: "id"
+  #       title: "title"
+  #       price: "price"
+  #       location: "locality"
+  #       bhk: "bhk"
+  #       area: "builtUpArea"
+  #       url: "shareUrl"
+  #       image: "primaryImage"
+  #       furnished: "furnishing"
+  #       bathrooms: "bathrooms"
+  #       floor: "floor"
+  #       total_floors: "totalFloors"
+  #       property_type: "propertyType"
+  #       description: "description"
+  #   rate_limit_seconds: 3.0
+  #   output_format: json
+  #
+  # Site: housing.com
+  # Status: PARTIALLY WORKING — Custom WAF (Akamai Bot Manager) blocks
+  #   Noida-specific HTML paths (406 Security Alert) but:
+  #   a) Homepage (/) loads fine (200, 1.6MB SSR with __INITIAL_STATE__)
+  #   b) GraphQL API endpoint discovered: mightyzeus-mum.housing.com/api/gql
+  #      (Apollo Server, introspection disabled)
+  #   c) Query fields discovered: searchHash(hash: String!): SearchHashResponse
+  #      SearchHashResponse has: hash, city { name id url }, statusCode,
+  #      featureType, sellers, searchEntityDetails
+  #   d) City format: {city_slug}_{service} → searchHash returns hash lookup
+  #   e) searchHash is NOT the main search — it's a hash utility. The actual
+  #      property search query is in the JS bundles (Apollo Client in bootstrap).
+  #   f) JS bundles: 66 scripts on CDN, Apollo Client in 9 bundles. The hash is
+  #      built via encodeURIComponent(JSON.stringify(modifyEntityData(L))).
+  #   g) Makaan.com redirects to housing.com/ (same infrastructure)
+  #   Next steps: Extract the actual search/hashGen GraphQL query from
+  #   bootstrap.02503f1b.m.d.js or the SRP bundle, then call it with proper
+  #   entity data parameters.

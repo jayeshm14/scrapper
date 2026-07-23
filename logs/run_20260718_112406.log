@@ -1,0 +1,36 @@
+2026-07-18 16:54:06,738 [INFO] Starting scrape: quotes_static
+2026-07-18 16:54:08,528 [INFO] Fetched (200) <GET https://quotes.toscrape.com/> (referer: https://www.google.com/)
+2026-07-18 16:54:09,563 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/2/> (referer: https://www.google.com/)
+2026-07-18 16:54:11,017 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/3/> (referer: https://www.google.com/)
+2026-07-18 16:54:11,094 [INFO] Finished quotes_static: 0 items in 4.4s
+2026-07-18 16:54:11,094 [INFO] Starting scrape: books_dynamic
+2026-07-18 16:54:19,087 [INFO] Fetched (200) <GET https://books.toscrape.com/> (referer: https://www.google.com/)
+2026-07-18 16:54:38,217 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-2.html> (referer: https://www.google.com/)
+2026-07-18 16:54:46,229 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-3.html> (referer: https://www.google.com/)
+2026-07-18 16:54:47,337 [INFO] Finished books_dynamic: 0 items in 36.2s
+2026-07-18 16:54:47,338 [INFO] Starting scrape: magicbricks
+2026-07-18 16:55:14,160 [INFO] Fetched (200) <GET https://www.magicbricks.com/flats-in-sector-134-noida-for-sale-pppfs> (referer: https://www.google.com/)
+2026-07-18 16:55:16,881 [INFO] Finished magicbricks: 0 items in 29.5s
+2026-07-18 16:55:16,882 [INFO] Starting scrape: 99acres
+2026-07-18 16:55:23,684 [WARNING] Attempt 1 failed: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.99acres.com/property-in-sector-134-noida-ffid
+Call log:
+  - navigating to "https://www.99acres.com/property-in-sector-134-noida-ffid", waiting until "load"
+. Retrying in 1s...
+2026-07-18 16:55:25,511 [WARNING] Attempt 2 failed: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.99acres.com/property-in-sector-134-noida-ffid
+Call log:
+  - navigating to "https://www.99acres.com/property-in-sector-134-noida-ffid", waiting until "load"
+. Retrying in 1s...
+2026-07-18 16:55:26,932 [ERROR] Failed after 3 attempts: Page.goto: net::ERR_NAME_NOT_RESOLVED at https://www.99acres.com/property-in-sector-134-noida-ffid
+Call log:
+  - navigating to "https://www.99acres.com/property-in-sector-134-noida-ffid", waiting until "load"
+
+2026-07-18 16:57:23,088 [INFO] Fetched (200) <GET https://www.99acres.com/property-in-sector-134-noida-ffid> (referer: https://www.google.com/)
+2026-07-18 17:00:11,147 [INFO] Finished 99acres: 0 items in 294.3s
+2026-07-18 17:00:11,160 [INFO] Starting scrape: squareyards
+2026-07-18 17:00:53,266 [INFO] Fetched (200) <GET https://www.squareyards.com/sale/property-for-sale-in-noida> (referer: https://www.google.com/)
+2026-07-18 17:01:03,434 [INFO] Finished squareyards: 0 items in 52.3s
+2026-07-18 17:01:03,435 [INFO] Starting scrape: olx
+2026-07-18 17:02:14,087 [INFO] Fetched (200) <GET https://www.olx.in/noida_g4059326/real-estate_c3> (referer: https://www.google.com/)
+2026-07-18 17:03:48,092 [INFO] Finished olx: 5 items in 164.6s
+2026-07-18 17:03:48,093 [INFO] Starting scrape: proptiger
+2026-07-18 17:04:12,114 [INFO] Fetched (200) <GET https://www.proptiger.com/noida-real-estate> (referer: https://www.google.com/)

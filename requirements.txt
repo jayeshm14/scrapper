@@ -1,0 +1,4 @@
+scrapling>=0.4
+pyyaml>=6.0
+tenacity>=8.0
+python-dotenv>=1.0

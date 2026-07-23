@@ -1,0 +1,25 @@
+2026-07-23 13:47:05,768 [INFO] Starting scrape: quotes_static
+2026-07-23 13:47:07,666 [INFO] Fetched (200) <GET https://quotes.toscrape.com/> (referer: https://www.google.com/)
+2026-07-23 13:47:08,818 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/2/> (referer: https://www.google.com/)
+2026-07-23 13:47:10,630 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/3/> (referer: https://www.google.com/)
+2026-07-23 13:47:11,860 [INFO] Finished quotes_static: 0 items in 6.1s
+2026-07-23 13:47:11,861 [INFO] Starting scrape: books_dynamic
+2026-07-23 13:47:20,315 [INFO] Fetched (200) <GET https://books.toscrape.com/> (referer: https://www.google.com/)
+2026-07-23 13:47:49,166 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-2.html> (referer: https://www.google.com/)
+2026-07-23 13:48:22,847 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-3.html> (referer: https://www.google.com/)
+2026-07-23 13:48:25,866 [INFO] Finished books_dynamic: 0 items in 74.0s
+2026-07-23 13:48:25,866 [INFO] Starting scrape: magicbricks
+2026-07-23 13:48:46,859 [INFO] Fetched (200) <GET https://www.magicbricks.com/flats-in-sector-134-noida-for-sale-pppfs> (referer: https://www.google.com/)
+2026-07-23 13:48:50,708 [INFO] Finished magicbricks: 0 items in 24.8s
+2026-07-23 13:48:50,709 [INFO] Starting scrape: 99acres
+2026-07-23 13:49:20,759 [INFO] Fetched (200) <GET https://www.99acres.com/property-in-sector-134-noida-ffid> (referer: https://www.google.com/)
+2026-07-23 13:49:27,007 [INFO] Finished 99acres: 0 items in 36.3s
+2026-07-23 13:49:27,008 [INFO] Starting scrape: squareyards
+2026-07-23 13:49:40,458 [INFO] Fetched (200) <GET https://www.squareyards.com/sale/property-for-sale-in-noida> (referer: https://www.google.com/)
+2026-07-23 13:49:44,197 [INFO] Finished squareyards: 0 items in 17.2s
+2026-07-23 13:49:44,198 [INFO] Starting scrape: olx
+2026-07-23 13:50:23,585 [INFO] Fetched (200) <GET https://www.olx.in/noida_g4059326/real-estate_c3> (referer: https://www.google.com/)
+2026-07-23 13:50:43,040 [INFO] Finished olx: 5 items in 58.8s
+2026-07-23 13:50:43,041 [INFO] Starting scrape: proptiger
+2026-07-23 13:51:01,769 [INFO] Fetched (200) <GET https://www.proptiger.com/noida-real-estate> (referer: https://www.google.com/)
+2026-07-23 13:51:05,268 [INFO] Finished proptiger: 0 items in 22.2s

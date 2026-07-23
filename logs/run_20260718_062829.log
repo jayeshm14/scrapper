@@ -1,0 +1,22 @@
+2026-07-18 11:58:29,858 [INFO] Starting scrape: quotes_static
+2026-07-18 11:58:31,542 [INFO] Fetched (200) <GET https://quotes.toscrape.com/> (referer: https://www.google.com/)
+2026-07-18 11:58:32,660 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/2/> (referer: https://www.google.com/)
+2026-07-18 11:58:34,140 [INFO] Fetched (200) <GET https://quotes.toscrape.com/page/3/> (referer: https://www.google.com/)
+2026-07-18 11:58:34,254 [INFO] Finished quotes_static: 0 items in 4.4s
+2026-07-18 11:58:34,255 [INFO] Starting scrape: books_dynamic
+2026-07-18 11:58:39,855 [INFO] Fetched (200) <GET https://books.toscrape.com/> (referer: https://www.google.com/)
+2026-07-18 11:58:44,925 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-2.html> (referer: https://www.google.com/)
+2026-07-18 11:58:50,286 [INFO] Fetched (200) <GET https://books.toscrape.com/catalogue/page-3.html> (referer: https://www.google.com/)
+2026-07-18 11:58:50,915 [INFO] Finished books_dynamic: 0 items in 16.7s
+2026-07-18 11:58:50,916 [INFO] Starting scrape: magicbricks
+2026-07-18 11:58:56,536 [INFO] Fetched (200) <GET https://www.magicbricks.com/flats-in-sector-134-noida-for-sale-pppfs> (referer: https://www.google.com/)
+2026-07-18 11:58:57,342 [INFO] Finished magicbricks: 0 items in 6.4s
+2026-07-18 11:58:57,343 [INFO] Starting scrape: 99acres
+2026-07-18 11:59:15,603 [INFO] Fetched (200) <GET https://www.99acres.com/property-in-sector-134-noida-ffid> (referer: https://www.google.com/)
+2026-07-18 11:59:16,902 [INFO] Finished 99acres: 0 items in 19.6s
+2026-07-18 11:59:16,902 [INFO] Starting scrape: squareyards
+2026-07-18 11:59:26,700 [INFO] Fetched (200) <GET https://www.squareyards.com/sale/property-for-sale-in-noida> (referer: https://www.google.com/)
+2026-07-18 11:59:27,426 [INFO] Finished squareyards: 5 items in 10.5s
+2026-07-18 11:59:27,426 [INFO] Starting scrape: makaan
+2026-07-18 11:59:29,063 [INFO] Fetched (200) <GET https://housing.com/> (referer: https://www.google.com/)
+2026-07-18 11:59:29,296 [INFO] Finished makaan: 3 items in 1.9s

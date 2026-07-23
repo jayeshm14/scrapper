@@ -1,0 +1,224 @@
+import re
+import json
+from pathlib import Path
+
+
+def _parse_price_india(v):
+    text = v.replace(',', '').replace('Onwards', '').replace('Onward', '').strip()
+    if 'Cr' in text:
+        return round(float(text.replace('Cr', '').replace('Lac', '').replace(' L ', ' ').replace('L', ' ').strip()) * 10000000)
+    if 'Lac' in text or ' L ' in f' {text} ':
+        return round(float(text.replace('Lac', '').replace(' L ', ' ').replace('L', ' ').strip()) * 100000)
+    if 'K' in text:
+        return round(float(text.replace('K', '').strip()) * 1000)
+    return None
+
+
+def _parse_area_sqft(v):
+    m = re.search(r'([\d,]+)\s*(?:-|\sto\s)', v)
+    if m:
+        return float(m.group(1).replace(',', ''))
+    m = re.search(r'[\d,]+', v)
+    if m:
+        return float(m.group().replace(',', ''))
+    return None
+
+
+def _parse_bhk(v):
+    m = re.search(r'(\d+)', v)
+    return int(m.group(1)) if m else None
+
+
+SITE_FIELD_MAP = {
+    "99acres": {
+        "source_site": ("site_name", None),
+        "listing_id": ("prop_id", None),
+        "url": ("listing_url", lambda v: f"https://www.99acres.com{v}" if v and v.startswith("/") else v),
+        "title": ("title", None),
+        "price_inr": ("price_raw", lambda v: float(v) if v and str(v).replace(".", "").isdigit() else None),
+        "price_per_sqft_inr": ("price_per_sqft", lambda v: float(v) if v else None),
+        "area_sqft": ("carpet_sqft", lambda v: float(v) if v else None),
+        "bhk": ("bedrooms", lambda v: int(v) if v and str(v).isdigit() else None),
+        "property_type": ("property_type", None),
+        "furnishing": ("furnish", lambda v: {2: "semi", 1: "full", 3: "unfurnished"}.get(v) if isinstance(v, int) else None),
+        "floor": ("floor", None),
+        "total_floors": ("total_floors", lambda v: int(v) if v and str(v).isdigit() else None),
+        "age_years": ("age", lambda v: int(v) if v and str(v).isdigit() else None),
+        "locality": ("locality", None),
+        "city": ("city", None),
+        "seller_type": ("contact_name", None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": ("top_usps", lambda v: v if isinstance(v, list) else []),
+    },
+    "magicbricks": {
+        "source_site": ("site_name", None),
+        "listing_id": ("prop_id", None),
+        "url": ("listing_url", lambda v: f"https://www.magicbricks.com/{v}" if v and not v.startswith("http") else v),
+        "title": ("title", None),
+        "price_inr": ("price_raw", lambda v: float(v) if v else None),
+        "price_per_sqft_inr": ("price_per_sqft", lambda v: float(v) if v else None),
+        "area_sqft": ("carpet_area", lambda v: float(v) if v else None),
+        "bhk": ("bedroom", lambda v: int(v) if v and str(v).isdigit() else None),
+        "property_type": (None, None),
+        "furnishing": ("furnished", lambda v: v.lower() if v else None),
+        "floor": ("floor", None),
+        "total_floors": ("total_floors", lambda v: int(v) if v and str(v).isdigit() else None),
+        "age_years": (None, None),
+        "locality": ("locality", None),
+        "city": (None, lambda _: "Noida"),
+        "seller_type": ("user_type", lambda v: v.lower() if v else None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": (None, None),
+    },
+    "squareyards": {
+        "source_site": ("site_name", None),
+        "listing_id": ("url", lambda v: v.split("/")[-1] if v else None),
+        "url": ("url", None),
+        "title": ("title", None),
+        "price_inr": ("price", lambda v: float(v) if v else None),
+        "price_per_sqft_inr": (None, None),
+        "area_sqft": (None, None),
+        "bhk": ("bedrooms", lambda v: int(v) if v else None),
+        "property_type": (None, lambda _: "apartment"),
+        "furnishing": (None, None),
+        "floor": (None, None),
+        "total_floors": (None, None),
+        "age_years": (None, None),
+        "locality": ("locality", None),
+        "city": ("city", None),
+        "seller_type": (None, None),
+        "latitude": ("geo.latitude", lambda v: float(v) if v else None),
+        "longitude": ("geo.longitude", lambda v: float(v) if v else None),
+        "amenities": (None, None),
+    },
+    "olx": {
+        "source_site": ("site_name", None),
+        "listing_id": ("url", lambda v: v.split('iid-')[-1].split('/')[0] if v and 'iid-' in str(v) else None),
+        "url": ("url", lambda v: f"https://www.olx.in{v}" if isinstance(v, str) and v.startswith('/') else v),
+        "title": ("title", None),
+        "price_inr": ("price", lambda v: float(v.replace('\u20b9', '').replace(',', '').strip()) if v else None),
+        "price_per_sqft_inr": (None, None),
+        "area_sqft": (None, None),
+        "bhk": ("details", lambda v: _parse_bhk(v.replace('BHK', ' BHK')) if v and re.search(r'(\d+)\s*BHK', v, re.I) else None),
+        "property_type": ("details", lambda v: 'rent' if v and 'rent' in v.lower() else ('sale' if v and 'sale' in v.lower() else None)),
+        "furnishing": ("details", lambda v: v if v and 'furnish' in v.lower() else None),
+        "floor": (None, None),
+        "total_floors": (None, None),
+        "age_years": (None, None),
+        "locality": ("location", lambda v: v.strip() if v else None),
+        "city": (None, lambda _: "Noida"),
+        "seller_type": (None, None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": (None, None),
+    },
+    "proptiger": {
+        "source_site": ("site_name", None),
+        "listing_id": ("url", lambda v: v.rstrip('/').split('-')[-1] if v else None),
+        "url": ("url", lambda v: f"https://www.proptiger.com{v}" if isinstance(v, str) and v.startswith('/') else v),
+        "title": ("title", None),
+        "price_inr": ("price", _parse_price_india),
+        "price_per_sqft_inr": (None, None),
+        "area_sqft": ("area", _parse_area_sqft),
+        "bhk": ("bhk", lambda v: _parse_bhk(v) if v else None),
+        "property_type": ("bhk", lambda v: 'apartment' if v and ('Apartment' in v or 'BHK' in v) else None),
+        "furnishing": (None, None),
+        "floor": (None, None),
+        "total_floors": (None, None),
+        "age_years": (None, None),
+        "locality": ("location", lambda v: v.strip() if v else None),
+        "city": (None, lambda _: "Noida"),
+        "seller_type": ("builder", lambda v: v.replace('By ', '').strip() if v else None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": (None, None),
+    },
+    "nobroker": {
+        "source_site": ("site_name", None),
+        "listing_id": ("prop_id", lambda v: str(v) if v else None),
+        "url": ("url", None),
+        "title": ("title", None),
+        "price_inr": ("price", lambda v: float(v) if v else None),
+        "price_per_sqft_inr": (None, None),
+        "area_sqft": ("area", lambda v: float(v) if v else None),
+        "bhk": ("bhk", lambda v: int(v) if v else None),
+        "property_type": ("property_type", None),
+        "furnishing": ("furnished", None),
+        "floor": ("floor", None),
+        "total_floors": ("total_floors", lambda v: int(v) if v else None),
+        "age_years": (None, None),
+        "locality": ("location", None),
+        "city": (None, lambda _: "Noida"),
+        "seller_type": (None, None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": (None, None),
+    },
+    "makaan": {
+        "source_site": ("site_name", None),
+        "listing_id": (None, None),
+        "url": (None, None),
+        "title": ("title", None),
+        "price_inr": ("price", None),
+        "price_per_sqft_inr": (None, None),
+        "area_sqft": (None, None),
+        "bhk": (None, None),
+        "property_type": (None, lambda _: "apartment"),
+        "furnishing": (None, None),
+        "floor": (None, None),
+        "total_floors": (None, None),
+        "age_years": (None, None),
+        "locality": ("locality", None),
+        "city": (None, lambda _: "Noida"),
+        "seller_type": (None, None),
+        "latitude": (None, None),
+        "longitude": (None, None),
+        "amenities": (None, None),
+    },
+}
+
+SCHEMA_VERSION = "1.0"
+
+
+def normalize(record: dict) -> dict:
+    site = record.get("site_name", "")
+    field_map = SITE_FIELD_MAP.get(site, SITE_FIELD_MAP.get("99acres"))
+    normalized = {"schema_version": SCHEMA_VERSION}
+    for out_key, (src_key, transform) in field_map.items():
+        if src_key is None and transform is None:
+            normalized[out_key] = None
+            continue
+        if src_key is None:
+            normalized[out_key] = transform(None) if transform else None
+            continue
+        value = record.get(src_key)
+        if transform and value is not None:
+            try:
+                value = transform(value)
+            except (ValueError, TypeError):
+                value = None
+        normalized[out_key] = value
+    normalized["scraped_at_utc"] = record.get("scraped_at") or record.get("scraped_at_utc")
+    return normalized
+
+
+def normalize_file(input_path: str) -> list[dict]:
+    path = Path(input_path)
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8-sig") as f:
+        records = json.load(f)
+    return [normalize(r) for r in records]
+
+
+def normalize_output_dir(site_name: str, output_dir: str = "output") -> list[dict]:
+    site_dir = Path(output_dir) / site_name
+    if not site_dir.exists():
+        return []
+    json_files = sorted(f for f in site_dir.glob("*.json") if not f.name.startswith("."))
+    if not json_files:
+        return []
+    latest = json_files[-1]
+    return normalize_file(str(latest))
