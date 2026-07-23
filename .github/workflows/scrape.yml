@@ -2,13 +2,8 @@ name: Scrape & Deploy
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
-  workflow_dispatch:      # Manual trigger
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
   scrape:
@@ -23,6 +18,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Verify secrets
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          echo "Token length: ${#CF_TOKEN}"
+          echo "Token first 4: ${CF_TOKEN:0:4}"
 
       - name: Install Python dependencies
         run: |
@@ -46,13 +48,9 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Debug secrets
-        run: |
-          echo "CLOUDFLARE_API_TOKEN is set: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}"
-          echo "CLOUDFLARE_ACCOUNT_ID is set: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}"
-          echo "Env var present: $(printenv CLOUDFLARE_API_TOKEN | wc -c) chars"
-
       - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
 
       - name: Upload output artifacts
