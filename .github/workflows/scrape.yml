@@ -46,9 +46,6 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Debug token
-        run: echo "Token set: $([[ -n $CLOUDFLARE_API_TOKEN ]] && echo yes || echo no)"
-
       - name: Deploy to Cloudflare Pages
         run: wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true --token $CLOUDFLARE_API_TOKEN
 
