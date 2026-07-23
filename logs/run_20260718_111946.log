@@ -1,3 +1,0 @@
-2026-07-18 16:49:46,563 [INFO] Starting scrape: squareyards
-2026-07-18 16:49:56,701 [INFO] Fetched (200) <GET https://www.squareyards.com/sale/property-for-sale-in-noida> (referer: https://www.google.com/)
-2026-07-18 16:49:58,122 [INFO] Finished squareyards: 21 items in 11.6s

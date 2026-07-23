@@ -1,3 +1,0 @@
-2026-07-18 13:09:44,781 [INFO] Starting scrape: proptiger
-2026-07-18 13:09:54,990 [INFO] Fetched (200) <GET https://www.proptiger.com/noida-real-estate> (referer: https://www.google.com/)
-2026-07-18 13:09:56,361 [INFO] Finished proptiger: 5 items in 11.6s
