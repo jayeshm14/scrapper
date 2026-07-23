@@ -30,6 +30,9 @@ jobs:
       - name: Create required directories
         run: mkdir -p logs output
 
+      - name: Install Playwright browsers
+        run: python -m playwright install --with-deps chromium
+
       - name: Run scraper
         run: python main.py --all
         env:
