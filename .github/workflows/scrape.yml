@@ -47,7 +47,7 @@ jobs:
         run: npm install -g wrangler
 
       - name: Deploy to Cloudflare Pages
-        run: wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true --token "$CLOUDFLARE_API_TOKEN"
+        run: wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
 
       - name: Upload output artifacts
         uses: actions/upload-artifact@v4
