@@ -42,13 +42,15 @@ jobs:
         run: npm install -g wrangler
 
       - name: Deploy to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ vars.CLOUDFLARE_API_TOKEN }}
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "ERROR: CLOUDFLARE_API_TOKEN secret is NOT set!"
-            echo "Go to: https://github.com/jayeshm14/scrapper/settings/secrets/actions"
+          TOKEN="${{ vars.CLOUDFLARE_API_TOKEN }}"
+          ACCOUNT="${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
+          echo "Token length: ${#TOKEN}"
+          echo "Account: $ACCOUNT"
+          if [ ${#TOKEN} -lt 10 ]; then
+            echo "ERROR: CLOUDFLARE_API_TOKEN is too short or empty!"
+            echo "Current token length: ${#TOKEN}"
+            echo "Set it at: https://github.com/jayeshm14/scrapper/settings/variables/actions"
             exit 1
           fi
-          echo "Token prefix: ${CLOUDFLARE_API_TOKEN:0:5}..."
-          wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
+          CLOUDFLARE_API_TOKEN="$TOKEN" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
