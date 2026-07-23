@@ -43,14 +43,4 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         run: |
-          TOKEN="${{ vars.CLOUDFLARE_API_TOKEN }}"
-          ACCOUNT="${{ vars.CLOUDFLARE_ACCOUNT_ID }}"
-          echo "Token length: ${#TOKEN}"
-          echo "Account: $ACCOUNT"
-          if [ ${#TOKEN} -lt 10 ]; then
-            echo "ERROR: CLOUDFLARE_API_TOKEN is too short or empty!"
-            echo "Current token length: ${#TOKEN}"
-            echo "Set it at: https://github.com/jayeshm14/scrapper/settings/variables/actions"
-            exit 1
-          fi
-          CLOUDFLARE_API_TOKEN="$TOKEN" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
+          CLOUDFLARE_API_TOKEN="${{ secrets.CLOUDFLARE_API_TOKEN }}" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
