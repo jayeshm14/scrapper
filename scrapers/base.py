@@ -99,23 +99,7 @@ class BaseScraper:
         if not self._check_robots(url):
             print(f"[WARN] {self.name}: robots.txt disallows {url}")
             return None
-        kwargs = {"headless": True}
-        if self.config.get("parser") in ("json_embed", "jsonld"):
-            kwargs["network_idle"] = True
-            kwargs["timeout"] = 90000
-            kwargs["load_dom"] = True
-        if self.fetcher_type == "stealthy":
-            kwargs["solve_cloudflare"] = True
-            kwargs["network_idle"] = kwargs.get("network_idle", True)
-            kwargs["load_dom"] = kwargs.get("load_dom", True)
-            return StealthyFetcher.fetch(url, **kwargs)
-        elif self.fetcher_type == "dynamic":
-            kwargs["solve_cloudflare"] = False
-            kwargs["network_idle"] = kwargs.get("network_idle", True)
-            kwargs["load_dom"] = kwargs.get("load_dom", True)
-            return StealthyFetcher.fetch(url, **kwargs)
-        else:
-            return Fetcher.get(url)
+        return Fetcher.get(url)
 
     def _extract_js_var(self, body: str, var_name: str) -> str | None:
         pattern = re.compile(
