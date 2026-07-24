@@ -43,4 +43,8 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         run: |
+          echo "Testing if secret resolves..."
+          echo "value: [${{ secrets.CLOUDFLARE_API_TOKEN != '' }}]"
+          echo "length: ${{ secrets.CLOUDFLARE_API_TOKEN == '' && 'EMPTY' || 'SET' }}"
+          echo "account: [${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}]"
           CLOUDFLARE_API_TOKEN="${{ secrets.CLOUDFLARE_API_TOKEN }}" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
