@@ -42,9 +42,15 @@ jobs:
         run: npm install -g wrangler
 
       - name: Deploy to Cloudflare Pages
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
-          echo "Testing if secret resolves..."
-          echo "value: [${{ secrets.CLOUDFLARE_API_TOKEN != '' }}]"
-          echo "length: ${{ secrets.CLOUDFLARE_API_TOKEN == '' && 'EMPTY' || 'SET' }}"
-          echo "account: [${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}]"
-          CLOUDFLARE_API_TOKEN="${{ secrets.CLOUDFLARE_API_TOKEN }}" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
+          echo "Bash check - token length: ${#CF_TOKEN}"
+          if [ -z "$CF_TOKEN" ]; then
+            echo "Still empty. Please delete and re-add the secret at:"
+            echo "https://github.com/jayeshm14/scrapper/settings/secrets/actions"
+            echo "Name must be exactly: CLOUDFLARE_API_TOKEN"
+            exit 1
+          fi
+          echo "Token starts with: ${CF_TOKEN:0:5}"
+          CLOUDFLARE_API_TOKEN="$CF_TOKEN" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
