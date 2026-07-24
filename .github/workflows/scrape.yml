@@ -8,6 +8,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
+    environment: Actions
     steps:
       - uses: actions/checkout@v4
 
@@ -41,27 +42,14 @@ jobs:
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Debug secrets
-        run: |
-          echo "=== Checking repo secrets via API ==="
-          gh api repos/jayeshm14/scrapper/actions/secrets --jq '.secrets[].name' 2>&1 || echo "API check failed"
-          echo "=== Checking vars ==="
-          gh api repos/jayeshm14/scrapper/actions/variables --jq '.variables[].name' 2>&1 || echo "API check failed"
-          echo "=== Environment check ==="
-          gh api repos/jayeshm14/scrapper/environments 2>&1 --jq '.environments[].name' || echo "No environments"
-        env:
-          GH_TOKEN: ${{ github.token }}
-
       - name: Deploy to Cloudflare Pages
         env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          echo "Token length: ${#CF_TOKEN}"
-          if [ ${#CF_TOKEN} -lt 5 ]; then
-            echo "Token still empty. Your repo is at: jayeshm14/scrapper"
-            echo "EXACT URL to add secrets:"
-            echo "https://github.com/jayeshm14/scrapper/settings/secrets/actions"
-            echo "Click 'New repository secret' on the Secrets tab"
-            exit 1
-          fi
-          CLOUDFLARE_API_TOKEN="$CF_TOKEN" wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: wrangler pages deploy dashboard --project-name noida-property-dashboard --commit-dirty=true
+
+      - name: Upload output artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-output-${{ github.run_number }}
+          path: output/
+          retention-days: 7
